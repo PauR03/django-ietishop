@@ -3,10 +3,7 @@ from .models import *
 # Register your models here.
 
 admin.site.register(Tag)
-admin.site.register(Producte)
-admin.site.register(Compra)
 admin.site.register(DetallCompra)
-admin.site.register(Cistella)
 
 class ProducteInline(admin.TabularInline):
     model = Producte
@@ -21,4 +18,19 @@ class CategoriaAdmin(admin.ModelAdmin):
     inlines = [CategoriaInline, ProducteInline]
     list_display = ["nom","parent"]
 
+class DetallCompraInline(admin.TabularInline):
+    model = DetallCompra
+
+class CompraAdmin(admin.ModelAdmin):
+    inlines = [DetallCompraInline]
+
+class ProducteAdmin(admin.ModelAdmin):
+    list_display = ["nom","preu","categoria"]
+
+class CistellaAdmin(admin.ModelAdmin):
+    filter_horizontal = ('producte',)
+
 admin.site.register(Categoria, CategoriaAdmin)
+admin.site.register(Compra, CompraAdmin)
+admin.site.register(Producte, ProducteAdmin)
+admin.site.register(Cistella, CistellaAdmin)
