@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Llista de Productes</title>
+
+    <style>
+        nav ul {
+            list-style-type: none;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Llista de Productes</h1>
+    <nav>
+        <ul>
+            {% for categoria in categories %}
+            <li>
+                <a href="/shop/cat/{{categoria.id}}">{{categoria.nom}}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </nav>
+    <ul>
+        {% for producte in productes %}
+        <li>
+            {{producte.nom}}
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>
