@@ -7,6 +7,9 @@ def product_list(request):
     categories = Categoria.objects.all()
     return render(request, "product_list.html", {"productes": productes, "categories": categories})
 
-def product_list_cat(request, id_cat):
-    productes = Producte.objects.filter(categoria=id_cat)
-    return render(request, "product_list.html", {"productes": productes})
+def car(request):
+    return render(request, "car.html")
+
+# def product_list_cat(request, id_cat):
+#     productes = Producte.objects.filter(categoria=id_cat)
+#     return render(request, "product_list.html", {"productes": productes})

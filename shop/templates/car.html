@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Llista de Productes</title>
+    <title>Cistella</title>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
@@ -12,6 +12,7 @@
     <style>
         body {
             background-color: aquamarine;
+            text-align: center;
         }
 
         header {
@@ -59,86 +60,95 @@
             border-radius: 10px;
             border: none;
             cursor: pointer;
-            background-color: chocolate;
+            background-color: rgb(221, 55, 55);
         }
 
-        li button:active {
+        button:active {
             transform: scale(.98);
+        }
+
+        button.pagar {
+            padding: 10px 20px;
+            width: 150px;
+            height: 50px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            background-color: rgb(255, 166, 0);
+            margin: 10px;
         }
     </style>
 </head>
 
 <body>
     <header>
-        <h1>Llistat de Productes</h1>
+        <h1>Cistella</h1>
         <a href="/shop/car" class="cistella">
             <img src="https://static.vecteezy.com/system/resources/previews/019/787/018/original/shopping-cart-icon-shopping-basket-on-transparent-background-free-png.png"
                 alt="Carrito de la compra">
         </a>
     </header>
-    <select>
-        <option selected>Selecciona una categoria...</option>
-        {% for categoria in categories %}
-        <option value="{{categoria.id}}">{{categoria.nom}}</option>
-        {% endfor %}
-    </select>
 
     <ul>
-        {% for producte in productes %}
-        <li id={{producte.id}}>
-            <span class="nombre">{{producte.nom}}</span>
-            <span class="precio">{{producte.preu}}$</span>
-            <button>Afegir a cistella</button>
-        </li>
-        {% endfor %}
     </ul>
 
+    <button class="pagar"> Pagar</button>
     <script>
-        function appendToCar(e) {
-            const divPadre = $(e.target).parent()
-            const id = divPadre.attr("id")
-            const nom = divPadre.find('.nombre').text()
-            const preu = divPadre.find('.precio').text().replace("$", "")
-
-            const producto = {
-                id,
-                nom,
-                preu
-            }
-
-            const car = JSON.parse(localStorage.getItem('car'))
-            car.push(producto)
-            localStorage.setItem('car', JSON.stringify(car))
-            alert("Producte afegit a la cistella!")
+        function deleteProd(id) {
+            const cistella = JSON.parse(localStorage.getItem('car'))
+            const newCistella = cistella.filter(producte => producte.id !== id)
+            localStorage.setItem('car', JSON.stringify(newCistella))
+            displayProds(newCistella)
         }
 
-        function displayProds(res) {
-            const productes = res.productes
+        function displayProds(productes) {
             $('ul').empty()
             productes.forEach(producte => {
                 $('ul').append(
                     `<li id=${producte.id}>
                         <span class="nombre">${producte.nom}</span>
                         <span class="precio">${producte.preu}$</span>
-                        <button>Afegir a cistella</button>
+                        <button class="deleteProducte">Eliminar</button>
                     </li>`
                 )
             })
+            $("button.deleteProducte").click((e) => {
+                const divPadre = $(e.target).parent()
+                const id = divPadre.attr("id")
+                deleteProd(id)
+            })
         }
 
-        $('select').on('change', function () {
-            var id = $(this).val()
+        function paymentCall() {
+            const cistella = JSON.parse(localStorage.getItem('car'))
+
             $.ajax({
-                url: '/shop/api/prods/' + id,
-                method: 'GET',
-                success: displayProds,
-                error: () => console.error('No se pudo')
+                url: '/shop/api/payment/',
+                method: 'POST',
+                data: {
+                    productes: JSON.stringify(cistella)
+                },
+                success: (res) => {
+                    console.log(res)
+                }
             })
-        })
+        }
 
         $(() => {
-            localStorage.setItem('car', JSON.stringify([]))
-            $("button").click(appendToCar)
+            const cistella = JSON.parse(localStorage.getItem('car'))
+            displayProds(cistella)
+
+            $("button.pagar").click(() => {
+                if (cistella.length === 0) {
+                    alert('La cistella està buida')
+                    return
+                }
+                paymentCall()
+
+                // alert('Pagament realitzat correctament')
+                // localStorage.setItem('car', JSON.stringify([]))
+                // displayProds([])
+            })
         })
     </script>
 </body>
