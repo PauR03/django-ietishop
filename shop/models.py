@@ -6,6 +6,7 @@ class Categoria(models.Model):
     descripcio = models.TextField(blank=True)
     parent = models.ForeignKey('self',blank=True,null=True,
             related_name='child', on_delete=models.CASCADE)
+
     def __str__(self):
         return self.nom
 
